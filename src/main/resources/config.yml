@@ -1,0 +1,19 @@
+host: localhost
+port: 8887
+# Leave auth blank for no authentication, NOT recommend
+auth:
+# List of blacklisted commands
+# if the command requires multiple arguments, you can target specific arguments, or leave it blank for all args
+# ex:
+#  - stop
+#  - op
+blacklist:
+  - stop
+  - op
+  - deop
+  - reload
+  - whitelist
+  - ban
+  - ban-ip
+  - pardon
+  - pardon-ip
