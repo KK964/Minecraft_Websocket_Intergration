@@ -40,6 +40,8 @@ public class MCWebsocketIntegration extends JavaPlugin {
         server = new EventListenerServer(new InetSocketAddress(host, port));
         server.setAuth(auth);
 
+        new BukkitEventListeners(this);
+
         getServer().getScheduler().runTaskTimer(this, ()->{
             String s = "";
             cmdLoop: while (!commandQueue.isEmpty() && (s = commandQueue.poll()) != null) {

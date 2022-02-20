@@ -37,6 +37,22 @@ public class EventListenerServer extends Thread {
         this.auth = auth;
     }
 
+    public void sendAll(String s) {
+        server.broadcast(s);
+    }
+
+    public void sendToIn(Set<String> s, String s1) {
+        for (WebSocket ws : server.getConnections()) {
+            if (s.contains(ws.getRemoteSocketAddress().toString())) {
+                sendTo(ws, s1);
+            }
+        }
+    }
+
+    public void sendTo(WebSocket ws, String s1) {
+        ws.send(s1);
+    }
+
     class WebServer extends WebSocketServer {
         private final Set<WebSocket> authenticated = new HashSet<>();
 
@@ -44,53 +60,70 @@ public class EventListenerServer extends Thread {
             super(address);
         }
 
+        private static final String commandHelp = "Send commands to run as \"Command {command}\", use the execute command for doing relative positions";
+        private static final String listenerHelp = "Listen to events by running \"Listen {event}\", stop listening by running \"Ignore {event}\". The full documentation for Events can be found on https://github.com/KK964/Minecraft_Websocket_Intergration/wiki/Events";
+
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
-            Bukkit.getLogger().info("New connection from " + conn.getRemoteSocketAddress());
+            if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("New connection from " + conn.getRemoteSocketAddress());
             if (auth != null) {
                 conn.send("Authentication needed... Send as \"Bearer {Auth token}\"");
-                Bukkit.getLogger().info("Waiting for  " + conn.getRemoteSocketAddress() + " to authenticate");
+                if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("Waiting for  " + conn.getRemoteSocketAddress() + " to authenticate");
                 return;
             }
             authenticated.add(conn);
-            conn.send("Authentication not required... Send commands to run as \"Command {command}\", use the execute command for doing relative positions");
+            conn.send("Authentication not required..." + "\n" + commandHelp + "\n" + listenerHelp);
         }
 
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-            Bukkit.getLogger().info("Closed " + conn.getRemoteSocketAddress() + " with exit code " + code + " additional info: " + reason);
+            if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("Closed " + conn.getRemoteSocketAddress() + " with exit code " + code + " additional info: " + reason);
             authenticated.remove(conn);
+            BukkitEventListeners.registeredEvents.forEach((k,v) -> v.remove(conn.getRemoteSocketAddress().toString()));
         }
 
         @Override
         public void onMessage(WebSocket conn, String message) {
             if (!authenticated.contains(conn)) {
                 if (!message.startsWith("Bearer ")) {
-                    conn.send("You must supply an Authentication Bearer token first!");
+                    if (MCWebsocketIntegration.debug) conn.send("You must supply an Authentication Bearer token first!");
                     return;
                 }
                 String suppliedAuth = message.substring("Bearer ".length());
                 if (!auth.equals(suppliedAuth)) {
                     conn.send("Incorrect Authentication Bearer token supplied!");
-                    Bukkit.getLogger().warning("authentication failed from " + conn.getRemoteSocketAddress());
+                    if (MCWebsocketIntegration.logFailedAuth || MCWebsocketIntegration.debug) Bukkit.getLogger().warning("authentication failed from " + conn.getRemoteSocketAddress());
                     return;
                 }
                 authenticated.add(conn);
-                conn.send("Successfully Authenticated.... Send commands to run as \"Command {command}\", use the execute command for doing relative positions");
-                Bukkit.getLogger().info("authentication succeeded from " + conn.getRemoteSocketAddress());
+                conn.send("Successfully Authenticated..." + "\n" + commandHelp + "\n" + listenerHelp);
+                if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("authentication succeeded from " + conn.getRemoteSocketAddress());
                 return;
             }
-            Bukkit.getLogger().info("received message from " + conn.getRemoteSocketAddress() + ": " + message);
+            if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("received message from " + conn.getRemoteSocketAddress() + ": " + message);
             String[] toRun = message.split("\n");
             int totalCommandsAdded = 0;
+            int totalListeners = 0;
             for (String r : toRun) {
                 if (r.startsWith("Command")) {
                     String cmd = r.substring("Command ".length());
                     MCWebsocketIntegration.addCommand(cmd);
                     totalCommandsAdded++;
+                } else if (r.startsWith("Listen")) {
+                    String event = r.substring("Listen ".length());
+                    BukkitEventListeners.getEventListeners(event).add(conn.getRemoteSocketAddress().toString());
+                    totalListeners++;
+                } else if (r.startsWith("Ignore")) {
+                    String event = r.substring("Ignore ".length());
+                    BukkitEventListeners.getEventListeners(event).remove(conn.getRemoteSocketAddress().toString());
+                    totalListeners++;
                 }
             }
-            conn.send("Added " + totalCommandsAdded + " to queue!");
+            String returnString = "";
+            if (totalCommandsAdded > 0) returnString += "Added " + totalCommandsAdded + " to queue! ";
+            if (totalListeners > 0) returnString += "Changed " + totalListeners + " listeners! ";
+            if (returnString.length() > 0) conn.send(returnString);
+            else conn.send("No changes made.");
         }
 
         @Override
@@ -99,12 +132,12 @@ public class EventListenerServer extends Thread {
                 conn.send("You must supply an Authentication Bearer token first!");
                 return;
             }
-            Bukkit.getLogger().info("received ByteBuffer from " + conn.getRemoteSocketAddress());
+            if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("received ByteBuffer from " + conn.getRemoteSocketAddress());
         }
 
         @Override
         public void onError(WebSocket conn, Exception ex) {
-            Bukkit.getLogger().warning("an error occurred on connection " + conn.getRemoteSocketAddress() + ":" + ex);
+            if (MCWebsocketIntegration.debug) Bukkit.getLogger().warning("an error occurred on connection " + conn.getRemoteSocketAddress() + ":" + ex);
         }
 
         @Override
