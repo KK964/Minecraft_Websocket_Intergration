@@ -59,97 +59,29 @@
   <dependencies>
     <dependency>
       <groupId>org.spigotmc</groupId>
-      <artifactId>spigot</artifactId>
+      <artifactId>spigot-api</artifactId>
       <version>1.18.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>spigot-api</artifactId>
-          <groupId>org.spigotmc</groupId>
+          <artifactId>commons-lang</artifactId>
+          <groupId>commons-lang</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jline</artifactId>
-          <groupId>jline</groupId>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>log4j-iostreams</artifactId>
-          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>gson</artifactId>
+          <groupId>com.google.code.gson</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>asm</artifactId>
-          <groupId>org.ow2.asm</groupId>
+          <artifactId>bungeecord-chat</artifactId>
+          <groupId>net.md-5</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>oshi-core</artifactId>
-          <groupId>com.github.oshi</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>authlib</artifactId>
-          <groupId>com.mojang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>brigadier</artifactId>
-          <groupId>com.mojang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>datafixerupper</artifactId>
-          <groupId>com.mojang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>javabridge</artifactId>
-          <groupId>com.mojang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-io</artifactId>
-          <groupId>commons-io</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>netty-all</artifactId>
-          <groupId>io.netty</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>fastutil</artifactId>
-          <groupId>it.unimi.dsi</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jopt-simple</artifactId>
-          <groupId>net.sf.jopt-simple</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>log4j-core</artifactId>
-          <groupId>org.apache.logging.log4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>log4j-slf4j18-impl</artifactId>
-          <groupId>org.apache.logging.log4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>json-simple</artifactId>
-          <groupId>com.googlecode.json-simple</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>sqlite-jdbc</artifactId>
-          <groupId>org.xerial</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>mysql-connector-java</artifactId>
-          <groupId>mysql</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>maven-resolver-provider</artifactId>
-          <groupId>org.apache.maven</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>maven-resolver-connector-basic</artifactId>
-          <groupId>org.apache.maven.resolver</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>maven-resolver-transport-http</artifactId>
-          <groupId>org.apache.maven.resolver</groupId>
+          <artifactId>snakeyaml</artifactId>
+          <groupId>org.yaml</groupId>
         </exclusion>
       </exclusions>
     </dependency>
