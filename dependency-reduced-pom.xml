@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.kk964gaming.mcwebhook</groupId>
-  <artifactId>MCWebhookIntegration</artifactId>
-  <name>MCWebhookIntegration</name>
+  <groupId>com.kk964gaming.mcwebsocket</groupId>
+  <artifactId>MCWebsocketIntegration</artifactId>
+  <name>MCWebsocketIntegration</name>
   <version>1.0.0</version>
   <description>Allow websockets to run commands on your server</description>
   <build>
