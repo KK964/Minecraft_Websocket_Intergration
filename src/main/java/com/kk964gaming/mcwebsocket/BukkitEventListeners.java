@@ -1,13 +1,12 @@
 package com.kk964gaming.mcwebsocket;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -26,14 +25,17 @@ public class BukkitEventListeners implements Listener {
     }
 
     private void emitEventSockets(Event e, Object ...args) {
-        String eventString = e.getEventName();
-        Set<String> listening = getEventListeners(eventString);
+        emitEventSockets(e.getEventName(), args);
+    }
+
+    private void emitEventSockets(String eventName, Object ...args) {
+        Set<String> listening = getEventListeners(eventName);
         if (listening.isEmpty()) return;
 
         JSONArray jsonArray = convertToJSONArray(args);
         String jsonString = jsonArray.toJSONString();
 
-        MCWebsocketIntegration.getInstance().getWebsocket().sendToIn(listening, "Event " + eventString +  " " + jsonString);
+        MCWebsocketIntegration.getInstance().getWebsocket().sendToIn(listening, "Event " + eventName +  " " + jsonString);
     }
 
     public static Set<String> getEventListeners(String e) {
@@ -72,6 +74,44 @@ public class BukkitEventListeners implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
-        emitEventSockets(e, e.getPlayer().getName(), e.getMessage());
+        emitEventSockets("PlayerChatEvent", e.getPlayer().getName(), e.getMessage());
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent e) {
+        if (!(e.getEntity() instanceof Player)) return;
+        Player p = (Player) e.getEntity();
+        emitEventSockets("PlayerDamageEvent", p.getName(), e.getDamage(), p.getHealth(), e.getCause().toString());
+    }
+
+    @EventHandler
+    public void onPlayerHeal(EntityRegainHealthEvent e) {
+        if (!(e.getEntity() instanceof Player)) return;
+        Player p = (Player) e.getEntity();
+        emitEventSockets("PlayerHealEvent", p.getName(), e.getAmount(), p.getHealth(), e.getRegainReason().toString());
+    }
+
+    @EventHandler
+    public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent e) {
+        emitEventSockets(e, e.getPlayer().getName(), e.getAdvancement().toString());
+    }
+
+    @EventHandler
+    public void onPlayerWorldChange(PlayerChangedWorldEvent e) {
+        emitEventSockets(e, e.getPlayer().getName(), e.getPlayer().getWorld().getName(), e.getFrom().getName());
+    }
+
+    @EventHandler
+    public void onPlayerFoodChange(FoodLevelChangeEvent e) {
+        emitEventSockets("PlayerFoodChangeEvent", e.getEntity().getName(), e.getFoodLevel(), e.getEntity().getSaturation());
+    }
+
+    @EventHandler
+    public void onPlayerHitPlayer(EntityDamageByEntityEvent e) {
+        if (!(e.getEntity() instanceof Player)) return;
+        if (!(e.getDamager() instanceof Player)) return;
+        Player p = (Player) e.getEntity();
+        Player dmgr = (Player) e.getDamager();
+        emitEventSockets("PlayerDamagePlayerEvent", p.getName(), dmgr.getName(), e.getDamage(), p.getHealth(), dmgr.getHealth());
     }
 }
