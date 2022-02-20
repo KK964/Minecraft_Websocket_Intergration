@@ -18,6 +18,9 @@ public class MCWebsocketIntegration extends JavaPlugin {
 
     private static List<String> bannedCommands = new ArrayList<>();
 
+    public static boolean debug = false;
+    public static boolean logFailedAuth = true;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -27,6 +30,9 @@ public class MCWebsocketIntegration extends JavaPlugin {
         int port = conf.getInt("port", 8887);
 
         String auth = conf.getString("auth", "");
+
+        debug = conf.getBoolean("debug", false);
+        logFailedAuth = conf.getBoolean("log-failed-auth", true);
 
         List<String> blacklistedCommands = conf.getStringList("blacklist");
         if (!blacklistedCommands.isEmpty()) bannedCommands = blacklistedCommands;
@@ -63,5 +69,9 @@ public class MCWebsocketIntegration extends JavaPlugin {
 
     public static MCWebsocketIntegration getInstance() {
         return instance;
+    }
+
+    public EventListenerServer getWebsocket() {
+        return server;
     }
 }

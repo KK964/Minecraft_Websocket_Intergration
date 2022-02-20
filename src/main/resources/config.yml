@@ -1,5 +1,7 @@
 host: localhost
 port: 8887
+debug: false
+log-failed-auth: true
 # Leave auth blank for no authentication, NOT recommend
 auth:
 # List of blacklisted commands
