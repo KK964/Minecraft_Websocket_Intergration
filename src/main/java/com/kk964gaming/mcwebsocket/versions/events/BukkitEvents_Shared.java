@@ -1,60 +1,20 @@
-package com.kk964gaming.mcwebsocket;
+package com.kk964gaming.mcwebsocket.versions.events;
 
 import com.kk964gaming.mcwebsocket.events.PlayerStatusChangeEvent;
-import org.bukkit.Location;
+import com.kk964gaming.mcwebsocket.versions.BukkitEvents;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
-import java.util.*;
+import java.util.HashMap;
 
-public class BukkitEventListeners implements Listener {
-
-    public static final HashMap<String, Set<String>> registeredEvents = new HashMap<>();
-
-    public BukkitEventListeners(JavaPlugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    private void emitEventSockets(Event e, Object ...args) {
-        emitEventSockets(e.getEventName(), args);
-    }
-
-    private void emitEventSockets(String eventName, Object ...args) {
-        Set<String> listening = getEventListeners(eventName);
-        if (listening.isEmpty()) return;
-
-        JSONArray jsonArray = convertToJSONArray(args);
-        String jsonString = jsonArray.toJSONString();
-
-        MCWebsocketIntegration.getInstance().getWebsocket().sendToIn(listening, "Event " + eventName +  " " + jsonString);
-    }
-
-    public static Set<String> getEventListeners(String e) {
-        return registeredEvents.computeIfAbsent(e, (s) -> new HashSet<>());
-    }
-
-    private JSONArray convertToJSONArray(Object ...args) {
-        JSONArray arr = new JSONArray();
-        arr.addAll(Arrays.asList(args));
-        return arr;
-    }
-
-    private JSONObject convertLocationToJSONObject(Location location) {
-        JSONObject object = new JSONObject();
-        object.put("world", location.getWorld().getName());
-        object.put("x", location.getX());
-        object.put("y", location.getY());
-        object.put("z", location.getZ());
-        return object;
+public class BukkitEvents_Shared extends BukkitEvents {
+    public BukkitEvents_Shared(JavaPlugin plugin) {
+        super(plugin);
     }
 
     @EventHandler
@@ -103,7 +63,7 @@ public class BukkitEventListeners implements Listener {
 
     @EventHandler
     public void onPlayerFoodChange(FoodLevelChangeEvent e) {
-        emitEventSockets("PlayerFoodChangeEvent", e.getEntity().getName(), e.getFoodLevel(), e.getEntity().getSaturation());
+        emitEventSockets("PlayerFoodChangeEvent", e.getEntity().getName(), e.getFoodLevel());
     }
 
     @EventHandler

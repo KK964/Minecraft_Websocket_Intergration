@@ -1,5 +1,7 @@
 package com.kk964gaming.mcwebsocket;
 
+import com.kk964gaming.mcwebsocket.versions.VersionManager;
+import com.kk964gaming.mcwebsocket.versions.events.BukkitEvents_R1_16;
 import org.bukkit.Bukkit;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -79,7 +81,7 @@ public class EventListenerServer extends Thread {
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
             if (MCWebsocketIntegration.debug) Bukkit.getLogger().info("Closed " + conn.getRemoteSocketAddress() + " with exit code " + code + " additional info: " + reason);
             authenticated.remove(conn);
-            BukkitEventListeners.registeredEvents.forEach((k,v) -> v.remove(conn.getRemoteSocketAddress().toString()));
+            VersionManager.registeredEvents.forEach((k, v) -> v.remove(conn.getRemoteSocketAddress().toString()));
         }
 
         @Override
@@ -111,11 +113,11 @@ public class EventListenerServer extends Thread {
                     totalCommandsAdded++;
                 } else if (r.startsWith("Listen")) {
                     String event = r.substring("Listen ".length());
-                    BukkitEventListeners.getEventListeners(event).add(conn.getRemoteSocketAddress().toString());
+                    BukkitEvents_R1_16.getEventListeners(event).add(conn.getRemoteSocketAddress().toString());
                     totalListeners++;
                 } else if (r.startsWith("Ignore")) {
                     String event = r.substring("Ignore ".length());
-                    BukkitEventListeners.getEventListeners(event).remove(conn.getRemoteSocketAddress().toString());
+                    BukkitEvents_R1_16.getEventListeners(event).remove(conn.getRemoteSocketAddress().toString());
                     totalListeners++;
                 }
             }

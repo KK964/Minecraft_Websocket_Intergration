@@ -1,6 +1,6 @@
 main: com.kk964gaming.mcwebsocket.MCWebsocketIntegration
 name: ${project.name}
 version: ${project.version}
-api-version: 1.18
 author: [KK964]
 description: ${project.description}
+api-version: 1.13

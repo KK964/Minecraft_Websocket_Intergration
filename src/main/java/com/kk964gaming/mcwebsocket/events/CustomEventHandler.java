@@ -1,6 +1,7 @@
 package com.kk964gaming.mcwebsocket.events;
 
-import com.kk964gaming.mcwebsocket.PlayerStatus;
+import com.kk964gaming.mcwebsocket.versions.PlayerStatus;
+import com.kk964gaming.mcwebsocket.versions.VersionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,8 +25,8 @@ public class CustomEventHandler implements Runnable {
     }
 
     private void checkPlayerStatusUpdate(Player player) {
-        PlayerStatus oldStatus = oldStatuses.computeIfAbsent(player, (s) -> new PlayerStatus(player));
-        PlayerStatus status = new PlayerStatus(player);
+        PlayerStatus oldStatus = oldStatuses.computeIfAbsent(player, (s) -> VersionManager.playerStatus(player));
+        PlayerStatus status = VersionManager.playerStatus(player);
         if (oldStatus.equals(status)) return;
         oldStatuses.put(player, status);
         PlayerStatusChangeEvent e = new PlayerStatusChangeEvent(player, status, oldStatus);

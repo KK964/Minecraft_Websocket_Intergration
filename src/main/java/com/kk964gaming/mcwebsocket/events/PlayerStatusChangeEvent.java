@@ -1,6 +1,6 @@
 package com.kk964gaming.mcwebsocket.events;
 
-import com.kk964gaming.mcwebsocket.PlayerStatus;
+import com.kk964gaming.mcwebsocket.versions.PlayerStatus;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
