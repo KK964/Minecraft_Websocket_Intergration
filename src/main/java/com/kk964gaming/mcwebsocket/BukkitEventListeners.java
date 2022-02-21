@@ -1,6 +1,9 @@
 package com.kk964gaming.mcwebsocket;
 
+import com.kk964gaming.mcwebsocket.events.PlayerStatusChangeEvent;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -11,10 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class BukkitEventListeners implements Listener {
 
@@ -114,4 +114,10 @@ public class BukkitEventListeners implements Listener {
         Player dmgr = (Player) e.getDamager();
         emitEventSockets("PlayerDamagePlayerEvent", p.getName(), dmgr.getName(), e.getDamage(), p.getHealth(), dmgr.getHealth());
     }
+
+    @EventHandler
+    public void onPlayerStatusChange(PlayerStatusChangeEvent e) {
+        emitEventSockets(e, e.getPlayer().getName(), e.getStatus().convertToJSON(), e.getOldStatus().convertToJSON());
+    }
+
 }

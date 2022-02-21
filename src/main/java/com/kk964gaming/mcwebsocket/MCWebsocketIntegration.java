@@ -1,5 +1,6 @@
 package com.kk964gaming.mcwebsocket;
 
+import com.kk964gaming.mcwebsocket.events.CustomEventHandler;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,6 +42,7 @@ public class MCWebsocketIntegration extends JavaPlugin {
         server.setAuth(auth);
 
         new BukkitEventListeners(this);
+        new CustomEventHandler(this);
 
         getServer().getScheduler().runTaskTimer(this, ()->{
             String s = "";
