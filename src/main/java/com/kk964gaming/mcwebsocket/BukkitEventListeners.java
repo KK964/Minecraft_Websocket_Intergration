@@ -93,7 +93,7 @@ public class BukkitEventListeners implements Listener {
 
     @EventHandler
     public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent e) {
-        emitEventSockets(e, e.getPlayer().getName(), e.getAdvancement().toString());
+        emitEventSockets(e, e.getPlayer().getName(), e.getAdvancement().getKey().getKey());
     }
 
     @EventHandler
