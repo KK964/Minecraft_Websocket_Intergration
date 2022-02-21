@@ -120,4 +120,17 @@ public class BukkitEventListeners implements Listener {
         emitEventSockets(e, e.getPlayer().getName(), e.getStatus().convertToJSON(), e.getOldStatus().convertToJSON());
     }
 
+    private static final HashMap<Player, Block> lastBlock = new HashMap<>();
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (e.getTo() == null) return;
+        Block last = lastBlock.computeIfAbsent(e.getPlayer(), (b) -> e.getTo().getBlock());
+        if (last.equals(e.getTo().getBlock())) return;
+        lastBlock.put(e.getPlayer(), e.getTo().getBlock());
+        emitEventSockets(e, e.getPlayer().getName(),
+                convertLocationToJSONObject(e.getTo()),
+                convertLocationToJSONObject(e.getFrom()),
+                e.getTo().getBlock().getType().getKey().getKey(),
+                e.getTo().getBlock().getRelative(BlockFace.DOWN).getType().getKey().getKey());
+    }
 }
