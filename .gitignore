@@ -3,5 +3,6 @@
 *.class
 *.log
 *.jar
+*.iml
 
 target/*

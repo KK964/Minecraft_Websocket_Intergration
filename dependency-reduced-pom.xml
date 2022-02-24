@@ -4,7 +4,7 @@
   <groupId>com.kk964gaming.mcwebsocket</groupId>
   <artifactId>MCWebsocketIntegration</artifactId>
   <name>MCWebsocketIntegration</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>Allow websockets to run commands on your server</description>
   <build>
     <defaultGoal>clean package</defaultGoal>

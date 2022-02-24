@@ -1,7 +1,6 @@
 package com.kk964gaming.mcwebsocket;
 
 import com.kk964gaming.mcwebsocket.events.CustomEventHandler;
-import com.kk964gaming.mcwebsocket.versions.VersionManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,23 +38,20 @@ public class MCWebsocketIntegration extends JavaPlugin {
         List<String> blacklistedCommands = conf.getStringList("blacklist");
         if (!blacklistedCommands.isEmpty()) bannedCommands = blacklistedCommands;
 
-        server = new EventListenerServer(new InetSocketAddress(host, port));
-        server.setAuth(auth);
+        server = new EventListenerServer(new InetSocketAddress(host, port), auth);
 
-        new VersionManager(this);
-//        new BukkitEvents_R1_18(this);
+        new BukkitEvents(this);
         new CustomEventHandler(this);
 
         getServer().getScheduler().runTaskTimer(this, ()->{
-            String s = "";
-            cmdLoop: while (!commandQueue.isEmpty() && (s = commandQueue.poll()) != null) {
-                if (s.startsWith("/")) s = s.substring(1);
-                for (String b : bannedCommands) {
-                    if (s.toLowerCase().startsWith(b)) {
-                        continue cmdLoop;
-                    }
+            String cmd;
+            cmdLoop:
+            while (!commandQueue.isEmpty() && (cmd = commandQueue.poll()) != null) {
+                if (cmd.startsWith("/")) cmd = cmd.substring(1);
+                for (String banned : bannedCommands) {
+                    if (cmd.toLowerCase().startsWith(banned)) continue cmdLoop;
                 }
-                getServer().dispatchCommand(getServer().getConsoleSender(), s);
+                getServer().dispatchCommand(getServer().getConsoleSender(), cmd);
             }
         }, 1,5);
     }
@@ -75,9 +71,5 @@ public class MCWebsocketIntegration extends JavaPlugin {
 
     public static MCWebsocketIntegration getInstance() {
         return instance;
-    }
-
-    public EventListenerServer getWebsocket() {
-        return server;
     }
 }
