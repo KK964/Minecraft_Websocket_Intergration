@@ -236,3 +236,14 @@ public class BukkitEvents implements Listener {
         move.put("standingOn", current.getRelative(BlockFace.DOWN));
         sendEvent(e, move);
     }
+
+    @EventHandler
+    public void onExperienceGain(PlayerExpChangeEvent e) {
+        Bukkit.getLogger().info("Exp gained!");
+        JSONObject xp = new JSONObject();
+        xp.put("player", e.getEventName());
+        xp.put("change", e.getAmount());
+        xp.put("xp", e.getPlayer().getExp());
+        sendEvent(e, xp);
+    }
+}
