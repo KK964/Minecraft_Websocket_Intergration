@@ -4,7 +4,7 @@ import com.kk964gaming.mcwebsocket.BukkitEvents;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -67,7 +67,7 @@ public class PlayerStatusChangeEvent extends Event {
             if (getClass() != o.getClass()) return false;
             PlayerStatus that = (PlayerStatus) o;
             boolean equal = true;
-            if (status.containsKey("isFreezing")) {
+            if (status.has("isFreezing")) {
                 equal = status.get("isFreezing").equals(that.status.get("isFreezing"));
             }
             if (equal) equal = status.get("isBurning").equals(that.status.get("isBurning"));

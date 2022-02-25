@@ -15,7 +15,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.java_websocket.WebSocket;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -32,8 +32,7 @@ public class BukkitEvents implements Listener {
 
     public static void sendEvent(String event, JSONObject object) {
         JSONObject obj = new JSONObject();
-        for (Object e : object.keySet()) {
-            if (!(e instanceof String)) return;
+        for (String e : object.keySet()) {
             Object v = object.get(e);
             Object nv = v;
             if (v instanceof Player) nv = convertPlayer((Player) v);
@@ -51,7 +50,7 @@ public class BukkitEvents implements Listener {
                         nonExistentSockets.add(ws);
                         return;
                     }
-                    ws.send(String.format("Event %s %s", event, obj.toJSONString()));
+                    ws.send(String.format("Event %s %s", event, obj.toString()));
                 });
 
         WebSocket ws;
