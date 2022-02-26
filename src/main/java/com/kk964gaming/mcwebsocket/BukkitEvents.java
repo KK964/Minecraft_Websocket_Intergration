@@ -6,10 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.Plugin;
@@ -39,6 +42,7 @@ public class BukkitEvents implements Listener {
             else if (v instanceof Location) nv = convertLocation((Location) v);
             else if (v instanceof Block) nv = convertBlock((Block) v);
             else if (v instanceof Material) nv = convertMaterial((Material) v);
+            else if (v instanceof Entity) nv = convertEntity((Entity) v);
             obj.put(e,nv);
         }
 
@@ -88,6 +92,14 @@ public class BukkitEvents implements Listener {
         return material.getKey().getKey();
     }
 
+    public static JSONObject convertEntity(Entity entity) {
+        JSONObject en = new JSONObject();
+        en.put("type", entity.getType().getKey().getKey());
+        en.put("name", entity.getName());
+        en.put("location", convertLocation(entity.getLocation()));
+        return en;
+    }
+
     public static String getVersion() {
         Plugin plugin = MCWebsocketIntegration.getInstance();
         if (plugin.getServer().getVersion().contains("1.18")) {
@@ -105,6 +117,9 @@ public class BukkitEvents implements Listener {
         }
         return "Unknown";
     }
+
+
+    // Player Events
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
@@ -257,5 +272,34 @@ public class BukkitEvents implements Listener {
         xp.put("xp", Math.round(e.getPlayer().getExp() * 10));
         xp.put("neededToLevelUp", e.getPlayer().getExpToLevel());
         sendEvent("PlayerExpChangeEvent", xp);
+    }
+
+    @EventHandler
+    public void onPlayerKillEntity(EntityDeathEvent e) {
+        Entity en = e.getEntity();
+        if (e.getEntity().getKiller() == null) return;
+        Player p = e.getEntity().getKiller();
+        JSONObject ede = new JSONObject();
+        ede.put("player", p);
+        ede.put("entity", en);
+        sendEvent("PlayerKillEntityEvent", ede);
+    }
+
+    // World Events
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
+        JSONObject b = new JSONObject();
+        b.put("player", e.getPlayer());
+        b.put("block", e.getBlock());
+        sendEvent(e, b);
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        JSONObject b = new JSONObject();
+        b.put("player", e.getPlayer());
+        b.put("block", e.getBlock());
+        sendEvent(e, b);
     }
 }
