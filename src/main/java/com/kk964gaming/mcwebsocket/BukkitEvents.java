@@ -242,7 +242,19 @@ public class BukkitEvents implements Listener {
         xp.put("player", e.getPlayer());
         xp.put("level", e.getNewLevel());
         xp.put("oldLevel", e.getOldLevel());
-        xp.put("xp", e.getPlayer().getTotalExperience());
+        xp.put("xp", Math.round(e.getPlayer().getExp() * 10));
+        xp.put("neededToLevelUp", e.getPlayer().getExpToLevel());
+        sendEvent("PlayerExpChangeEvent", xp);
+    }
+
+    @EventHandler
+    public void onExpChange(PlayerExpChangeEvent e) {
+        JSONObject xp = new JSONObject();
+        Player p = e.getPlayer();
+        xp.put("player", p);
+        xp.put("level", p.getLevel());
+        xp.put("oldLevel", p.getLevel());
+        xp.put("xp", Math.round(e.getPlayer().getExp() * 10));
         xp.put("neededToLevelUp", e.getPlayer().getExpToLevel());
         sendEvent("PlayerExpChangeEvent", xp);
     }
