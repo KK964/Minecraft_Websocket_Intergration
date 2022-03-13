@@ -148,7 +148,7 @@ public class BukkitEvents implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         JSONObject msg = new JSONObject();
         msg.put("player", e.getPlayer());
-        msg.put("message", e.getPlayer());
+        msg.put("message", e.getMessage());
         sendEvent("PlayerChatEvent", msg);
     }
 
