@@ -27,7 +27,6 @@ public class MCWebsocketIntegration extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
         FileConfiguration conf = getConfig();
-        String host = conf.getString("host", "localhost");
         int port = conf.getInt("port", 8887);
 
         String auth = conf.getString("auth", "");
@@ -38,7 +37,7 @@ public class MCWebsocketIntegration extends JavaPlugin {
         List<String> blacklistedCommands = conf.getStringList("blacklist");
         if (!blacklistedCommands.isEmpty()) bannedCommands = blacklistedCommands;
 
-        server = new EventListenerServer(new InetSocketAddress(host, port), auth);
+        server = new EventListenerServer(new InetSocketAddress(port), auth);
 
         new BukkitEvents(this);
         new CustomEventHandler(this);
