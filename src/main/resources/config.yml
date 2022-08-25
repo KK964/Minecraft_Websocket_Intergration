@@ -3,6 +3,7 @@ debug: false
 log-failed-auth: true
 # Leave auth blank for no authentication, NOT recommend
 auth:
+silence-command-output: true
 # List of blacklisted commands
 # if the command requires multiple arguments, you can target specific arguments, or leave it blank for all args
 # ex:

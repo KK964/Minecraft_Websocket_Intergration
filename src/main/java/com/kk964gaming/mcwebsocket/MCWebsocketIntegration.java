@@ -1,7 +1,12 @@
 package com.kk964gaming.mcwebsocket;
 
 import com.kk964gaming.mcwebsocket.events.CustomEventHandler;
+import org.bukkit.GameRule;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.InetSocketAddress;
@@ -21,6 +26,7 @@ public class MCWebsocketIntegration extends JavaPlugin {
 
     public static boolean debug = false;
     public static boolean logFailedAuth = true;
+    public static boolean hideCommandOutput = true;
 
     @Override
     public void onEnable() {
@@ -33,6 +39,7 @@ public class MCWebsocketIntegration extends JavaPlugin {
 
         debug = conf.getBoolean("debug", false);
         logFailedAuth = conf.getBoolean("log-failed-auth", true);
+        hideCommandOutput = conf.getBoolean("silence-command-output", true);
 
         List<String> blacklistedCommands = conf.getStringList("blacklist");
         if (!blacklistedCommands.isEmpty()) bannedCommands = blacklistedCommands;
@@ -50,7 +57,19 @@ public class MCWebsocketIntegration extends JavaPlugin {
                 for (String banned : bannedCommands) {
                     if (cmd.toLowerCase().startsWith(banned)) continue cmdLoop;
                 }
-                getServer().dispatchCommand(getServer().getConsoleSender(), cmd);
+
+                World world = getServer().getWorlds().get(0);
+                if (world == null) break;
+                Entity cmdMinecart = world.spawnEntity(new Location(world, 0, 0xFFFFFF, 0), EntityType.MINECART_COMMAND);
+                cmdMinecart.setCustomName("MCWS");
+
+                boolean cmdFeedback = world.getGameRuleValue(GameRule.SEND_COMMAND_FEEDBACK);
+                if (hideCommandOutput) world.setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
+
+                getServer().dispatchCommand(cmdMinecart, cmd);
+
+                world.setGameRule(GameRule.SEND_COMMAND_FEEDBACK, cmdFeedback);
+                cmdMinecart.remove();
             }
         }, 1,5);
     }
